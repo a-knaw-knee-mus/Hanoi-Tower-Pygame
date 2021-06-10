@@ -68,7 +68,6 @@ class Board:
         self.start_index = None
         self.end_index = None
 
-    def initialize(self):
         self.array = [[0] * 5 for _ in range(3)]
         self.array_locations = [[(0, 0)] * 5 for _ in range(3)]
         for i in range(0, self.size):
@@ -147,9 +146,9 @@ class Board:
 
 def main():
     run = True
-    state = 'starterText'
     turns = 0
     show_starter_text()
+    state = 'starterText'
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -164,16 +163,15 @@ def main():
                     if event.key in dict_level_select:
                         size = dict_level_select[event.key]
                         board = Board(size)
-                        state = 'pickStart'
-                        board.initialize()
                         board.draw_window()
+                        state = 'pickStart'
                 else:
                     board.draw_window()
                     if state == 'pickStart':
                         if event.key in dict_moves:
                             start = dict_moves[event.key]
-                            state = 'pickEnd'
                             board.show_start_move(start)
+                            state = 'pickEnd'
                     elif state == 'pickEnd':
                         if event.key in dict_moves:
                             end = dict_moves[event.key]
@@ -189,9 +187,9 @@ def main():
                             if board.puzzle_complete() is True:
                                 pygame.display.update()
                                 if msg_box(turns) is True:
-                                    state = 'starterText'
                                     turns = 0
                                     show_starter_text()
+                                    state = 'starterText'
                                 else:
                                     run = False
         pygame.display.update()
