@@ -7,7 +7,7 @@ from tkinter import messagebox
 
 pygame.font.init()
 
-dict_rects = {
+dict_blocks = {
     0: pygame.image.load(os.path.join('Images', '0block.png')),
     1: pygame.image.load(os.path.join('Images', '1block.png')),
     2: pygame.image.load(os.path.join('Images', '2block.png')),
@@ -60,31 +60,31 @@ def show_invalid_move():
     WIN.blit(invalid_text, (330, 190))
 
 
-class Board:
+class Puzzle:
     def __init__(self, size):
         self.size = size
-        self.array = []
-        self.array_locations = []
+        self.blocks = []
+        self.coordinates = []
         self.start_index = None
         self.end_index = None
 
-        self.array = [[0] * 5 for _ in range(3)]
-        self.array_locations = [[(0, 0)] * 5 for _ in range(3)]
+        self.blocks = [[0] * 5 for _ in range(3)]
+        self.coordinates = [[(0, 0)] * 5 for _ in range(3)]
         for i in range(0, self.size):
-            self.array[0][i] = self.size - i
+            self.blocks[0][i] = self.size - i
 
         for i in range(0, 3):
             for j in range(0, 5):
                 x = 275 * i + 25
                 y = 25 * (5 - j)
-                self.array_locations[i][j] = (x, y)
+                self.coordinates[i][j] = (x, y)
 
-    def draw_window(self):
+    def show_blocks(self):
         WIN.fill(CYAN)
 
         for i in range(0, 3):
             for j in range(0, 5):
-                WIN.blit(dict_rects[self.array[i][j]], self.array_locations[i][j])
+                WIN.blit(dict_blocks[self.blocks[i][j]], self.coordinates[i][j])
 
         title_1 = FONT.render('1', True, WHITE)
         WIN.blit(title_1, (142, 1))
@@ -106,25 +106,25 @@ class Board:
         WIN.blit(end_text, (268, 160))
 
     def move_block(self):
-        index = np.max(np.nonzero(self.array[self.start_index]))
+        index = np.max(np.nonzero(self.blocks[self.start_index]))
 
-        if self.array[self.end_index][0] == 0:
-            self.array[self.end_index][0] = self.array[self.start_index][index]
+        if self.blocks[self.end_index][0] == 0:
+            self.blocks[self.end_index][0] = self.blocks[self.start_index][index]
         else:  # move block to other stack at the index of the first zero
-            self.array[self.end_index][self.array[self.end_index].index(0)] = self.array[self.start_index][index]
+            self.blocks[self.end_index][self.blocks[self.end_index].index(0)] = self.blocks[self.start_index][index]
 
-        self.array[self.start_index][index] = 0
+        self.blocks[self.start_index][index] = 0
 
     def valid_move(self):
-        if self.array[self.start_index][0] != 0:  # check if the stack you're moving FROM has a block in it
-            smaller = self.array[self.start_index][np.max(np.nonzero(self.array[self.start_index]))]
+        if self.blocks[self.start_index][0] != 0:  # check if the stack you're moving FROM has a block in it
+            smaller = self.blocks[self.start_index][np.max(np.nonzero(self.blocks[self.start_index]))]
         else:
             return False
 
-        if self.array[self.end_index][0] == 0:
+        if self.blocks[self.end_index][0] == 0:
             return True
         else:
-            larger = self.array[self.end_index][np.max(np.nonzero(self.array[self.end_index]))]
+            larger = self.blocks[self.end_index][np.max(np.nonzero(self.blocks[self.end_index]))]
 
         if smaller > larger:  # check if you're allowed to move your blocks as per the rules
             return False
@@ -137,7 +137,7 @@ class Board:
         for i in range(1, 3):
             count = 0
             for j in range(0, self.size):
-                if self.array[i][j] == self.size - j:
+                if self.blocks[i][j] == self.size - j:
                     count += 1
             if count == self.size:
                 return True
@@ -146,9 +146,9 @@ class Board:
 
 def main():
     run = True
+    state = 'starterText'
     turns = 0
     show_starter_text()
-    state = 'starterText'
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -162,34 +162,34 @@ def main():
                 if state == 'starterText':
                     if event.key in dict_level_select:
                         size = dict_level_select[event.key]
-                        board = Board(size)
-                        board.draw_window()
+                        hanoi = Puzzle(size)
                         state = 'pickStart'
+                        hanoi.show_blocks()
                 else:
-                    board.draw_window()
+                    hanoi.show_blocks()
                     if state == 'pickStart':
                         if event.key in dict_moves:
                             start = dict_moves[event.key]
-                            board.show_start_move(start)
                             state = 'pickEnd'
+                            hanoi.show_start_move(start)
                     elif state == 'pickEnd':
                         if event.key in dict_moves:
                             end = dict_moves[event.key]
-                            board.set_end_index(end)
+                            hanoi.set_end_index(end)
                             state = 'pickStart'
-                            if board.valid_move() is True:
-                                board.move_block()
-                                board.draw_window()
+                            if hanoi.valid_move() is True:
+                                hanoi.move_block()
+                                hanoi.show_blocks()
                                 turns += 1
                             else:
                                 show_invalid_move()
-                            board.show_end_move()
-                            if board.puzzle_complete() is True:
+                            hanoi.show_end_move()
+                            if hanoi.puzzle_complete() is True:
                                 pygame.display.update()
                                 if msg_box(turns) is True:
+                                    state = 'starterText'
                                     turns = 0
                                     show_starter_text()
-                                    state = 'starterText'
                                 else:
                                     run = False
         pygame.display.update()
