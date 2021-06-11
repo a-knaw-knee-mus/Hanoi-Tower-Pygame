@@ -70,11 +70,11 @@ class Puzzle:
 
         self.blocks = [[0] * 5 for _ in range(3)]
         self.coordinates = [[(0, 0)] * 5 for _ in range(3)]
-        for i in range(0, self.size):
+        for i in range(self.size):
             self.blocks[0][i] = self.size - i
 
-        for i in range(0, 3):
-            for j in range(0, 5):
+        for i in range(3):
+            for j in range(5):
                 x = 275 * i + 25
                 y = 25 * (5 - j)
                 self.coordinates[i][j] = (x, y)
@@ -82,8 +82,8 @@ class Puzzle:
     def show_blocks(self):
         WIN.fill(CYAN)
 
-        for i in range(0, 3):
-            for j in range(0, 5):
+        for i in range(3):
+            for j in range(5):
                 WIN.blit(dict_blocks[self.blocks[i][j]], self.coordinates[i][j])
 
         title_1 = FONT.render('1', True, WHITE)
@@ -136,7 +136,7 @@ class Puzzle:
     def puzzle_complete(self):
         for i in range(1, 3):
             count = 0
-            for j in range(0, self.size):
+            for j in range(self.size):
                 if self.blocks[i][j] == self.size - j:
                     count += 1
             if count == self.size:
