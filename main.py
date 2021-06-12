@@ -158,8 +158,7 @@ def main():
                     state = 'starterText'
                     turns = 0
                     show_starter_text()
-            if event.type == pygame.KEYDOWN:
-                if state == 'starterText':
+                elif state == 'starterText':
                     if event.key in dict_level_select:
                         size = dict_level_select[event.key]
                         hanoi = Puzzle(size)
@@ -167,13 +166,12 @@ def main():
                         hanoi.show_blocks()
                 else:
                     hanoi.show_blocks()
-                    if state == 'pickStart':
-                        if event.key in dict_moves:
+                    if event.key in dict_moves:
+                        if state == 'pickStart':
                             start = dict_moves[event.key]
                             state = 'pickEnd'
                             hanoi.show_start_move(start)
-                    elif state == 'pickEnd':
-                        if event.key in dict_moves:
+                        elif state == 'pickEnd':
                             end = dict_moves[event.key]
                             hanoi.set_end_index(end)
                             state = 'pickStart'
