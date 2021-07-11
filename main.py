@@ -50,9 +50,10 @@ def show_starter_text():
 
 def msg_box(count):
     Tk().wm_withdraw()
-    response = tkinter.messagebox.askyesno('YOU WON',
-                                           f'You completed the tower in {count} turns.\nDo you want to play again?')
-    return response
+    return tkinter.messagebox.askyesno(
+        'YOU WON',
+        f'You completed the tower in {count} turns.\nDo you want to play again?'
+    )
 
 
 def show_invalid_move():
@@ -74,8 +75,8 @@ class Puzzle:
             self.blocks[0][i] = self.size - i
 
         for i in range(3):
+            x = 275 * i + 25
             for j in range(5):
-                x = 275 * i + 25
                 y = 25 * (5 - j)
                 self.coordinates[i][j] = (x, y)
 
@@ -135,10 +136,7 @@ class Puzzle:
 
     def puzzle_complete(self):
         for i in range(1, 3):
-            count = 0
-            for j in range(self.size):
-                if self.blocks[i][j] == self.size - j:
-                    count += 1
+            count = sum(self.blocks[i][j] == self.size - j for j in range(self.size))
             if count == self.size:
                 return True
         return False
